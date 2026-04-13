@@ -9,21 +9,29 @@ st.set_page_config(page_title="St. Louis Soccer xG Dashboard", layout="wide", pa
 st.title("⚽ St. Louis Soccer Performance Dashboard + xG Analytics")
 st.caption("St. Louis CITY SC • StL Ambush • France • Senegal | Live Data + Lightweight xG Model")
 
-# ====================== SIDEBAR API KEY ======================
-API_KEY = st.sidebar.text_input("🔑 API-Football Key (get free at api-football.com)", type="password", value="")
+import streamlit as st
+import requests
+import pandas as pd
+import plotly.graph_objects as go
+from datetime import datetime
+
+st.set_page_config(page_title="St. Louis Soccer xG Dashboard", layout="wide", page_icon="⚽")
+
+st.title("⚽ St. Louis Soccer Performance Dashboard + xG Analytics")
+st.caption("St. Louis CITY SC • StL Ambush • France • Senegal | Live Data + xG Model")
+
+# ====================== SECURE API KEY ======================
+# This will read from Streamlit Secrets (Cloud) or .streamlit/secrets.toml (local)
+API_KEY = st.secrets.get("API_FOOTBALL_KEY", None)
+
+if not API_KEY:
+    st.sidebar.error("API key not found. Please add it in Streamlit Secrets (Cloud) or create .streamlit/secrets.toml locally.")
+    st.stop()
+
 BASE_URL = "https://v3.football.api-sports.io/"
-HEADERS = {"x-apisports-key": API_KEY} if API_KEY else {}
+HEADERS = {"x-apisports-key": API_KEY}
 
-st.sidebar.info("Enter your API key above to load live standings, fixtures, and advanced stats.")
-
-def api_call(endpoint, params=None):
-    if not API_KEY:
-        return {"response": []}
-    try:
-        r = requests.get(BASE_URL + endpoint, headers=HEADERS, params=params or {}, timeout=15)
-        return r.json() if r.status_code == 200 else {"response": []}
-    except:
-        return {"response": []}
+# Rest of your code stays the same (api_call function, tabs, xG calculations, etc.)
 
 # ====================== LIGHTWEIGHT xG PROXY ======================
 def calculate_xg_proxy(shots=10, sot=4, possession=50, big_chances=2):

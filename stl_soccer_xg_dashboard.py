@@ -7,6 +7,7 @@ import numpy as np
 
 st.set_page_config(page_title="St. Louis Soccer Analyst Dashboard", layout="wide", page_icon="⚽")
 
+# Professional Dark Theme
 st.markdown("""
 <style>
     .main { background-color: #0a0f1c; }
@@ -16,14 +17,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header
+# Header with Logo
 col1, col2, col3 = st.columns([1, 6, 1])
 with col1:
     st.image("https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/St._Louis_CITY_SC_logo.svg/512px-St._Louis_CITY_SC_logo.svg.png", width=95)
 
 with col2:
     st.title("St. Louis Soccer Analyst Dashboard")
-    st.caption("Full Professional Analyst Suite • MLS 2026")
+    st.caption("Complete Professional Suite • All Stats + Trends • MLS 2026")
 
 with col3:
     st.image("https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/512px-Flag_of_France.svg.png", width=55)
@@ -47,7 +48,8 @@ tabs = st.tabs([
     "📊 Advanced Charts",
     "📍 Shot Maps",
     "👤 Player Comparison Matrix",
-    "📈 Expected Points & Tactics"
+    "📈 Player Performance Trends",
+    "📉 Expected Points & Tactics"
 ])
 
 # ====================== CITY SC OVERVIEW ======================
@@ -79,14 +81,14 @@ with tabs[0]:
 with tabs[1]:
     st.subheader("🔬 Full Analyst Stats Hub")
 
-    st.markdown("### Attacking")
+    st.markdown("### Attacking Statistics")
     att = pd.DataFrame({
         "Metric": ["xG Proxy", "xA Proxy", "Shots on Target %", "Key Passes", "Dribble Success %"],
         "Value": ["18.4", "12.7", "38%", "142", "52%"]
     })
     st.dataframe(att, use_container_width=True, hide_index=True)
 
-    st.markdown("### Defensive")
+    st.markdown("### Defensive Statistics")
     def_stats = pd.DataFrame({
         "Metric": ["PPDA", "Tackles + Interceptions", "Aerial Duels Won %", "Fouls Committed"],
         "Value": ["9.8", "142", "54%", "98"]
@@ -100,11 +102,17 @@ with tabs[1]:
     })
     st.dataframe(poss, use_container_width=True, hide_index=True)
 
+    st.markdown("### Goalkeeping")
+    gk = pd.DataFrame({
+        "Metric": ["Clean Sheets", "Saves", "Goals Conceded"],
+        "Value": ["4", "67", "21"]
+    })
+    st.dataframe(gk, use_container_width=True, hide_index=True)
+
 # ====================== ADVANCED CHARTS ======================
 with tabs[2]:
     st.subheader("📊 Advanced Charts")
 
-    # xG Trend
     dates = pd.date_range(end=datetime.today(), periods=10).tolist()
     fig_trend = go.Figure()
     fig_trend.add_trace(go.Scatter(x=dates, y=[1.4,1.8,1.1,2.3,1.6,0.9,2.0,1.7,2.4,1.5], name="xG", line=dict(color="#00ff9d")))
@@ -112,7 +120,6 @@ with tabs[2]:
     fig_trend.update_layout(title="xG vs Actual Goals Trend", template="plotly_dark", height=420)
     st.plotly_chart(fig_trend, use_container_width=True)
 
-    # Radar Chart
     categories = ['Attacking', 'Defensive', 'Possession', 'Set Pieces', 'Pressing']
     values = [82, 68, 75, 71, 79]
     fig_radar = go.Figure()
@@ -162,9 +169,29 @@ with tabs[4]:
     })
     st.dataframe(player_matrix, use_container_width=True, hide_index=True)
 
-# ====================== EXPECTED POINTS & TACTICAL HEATMAPS ======================
+# ====================== PLAYER PERFORMANCE TRENDS ======================
 with tabs[5]:
-    st.subheader("📈 Expected Points & Tactical Heatmaps")
+    st.subheader("📈 Player Performance Trends")
+
+    st.write("**João Klauss – Goal Scoring Trend**")
+    dates = pd.date_range(end=datetime.today(), periods=8).tolist()
+    klauss_goals = [0, 1, 0, 2, 1, 0, 1, 2]
+    klauss_xg = [0.8, 1.2, 0.6, 1.8, 1.1, 0.7, 1.3, 1.9]
+
+    fig_klauss = go.Figure()
+    fig_klauss.add_trace(go.Scatter(x=dates, y=klauss_goals, name="Actual Goals", line=dict(color="#ff4d4d"), mode="lines+markers"))
+    fig_klauss.add_trace(go.Scatter(x=dates, y=klauss_xg, name="xG", line=dict(color="#00ff9d"), mode="lines+markers"))
+    fig_klauss.update_layout(title="João Klauss - Goals vs xG Trend", template="plotly_dark", height=400)
+    st.plotly_chart(fig_klauss, use_container_width=True)
+
+    st.write("**Marcel Hartel – Assists Trend**")
+    hartel_assists = [1, 0, 2, 1, 0, 1, 2, 0]
+    fig_hartel = px.line(x=dates, y=hartel_assists, markers=True, title="Marcel Hartel - Assists Trend")
+    st.plotly_chart(fig_hartel, use_container_width=True)
+
+# ====================== EXPECTED POINTS & TACTICAL HEATMAPS ======================
+with tabs[6]:
+    st.subheader("📉 Expected Points & Tactical Heatmaps")
 
     # Expected Points Table
     st.write("**Expected Points Table (xPts)**")
@@ -176,7 +203,7 @@ with tabs[5]:
     })
     st.dataframe(xpts, use_container_width=True, hide_index=True)
 
-    # Tactical Heatmap (Possession + Pressing Proxy)
+    # Tactical Heatmap
     st.write("**Tactical Heatmap – Possession & Pressing Zones**")
     heatmap_data = np.array([
         [45, 52, 48],
@@ -187,5 +214,5 @@ with tabs[5]:
                          title="Team Tactical Heatmap (Higher = More Activity)")
     st.plotly_chart(fig_heat, use_container_width=True)
 
-st.success("✅ Full Analyst Dashboard Complete with Player Comparison Matrix, Expected Points Table, and Tactical Heatmaps.")
+st.success("✅ Complete Professional Analyst Dashboard – All Stats, Player Comparison Matrix, Performance Trends, Expected Points, and Tactical Heatmaps Included.")
 st.caption("Built for MoFutbol 🎙️⚽️ • Saint Charles, Missouri • April 2026")

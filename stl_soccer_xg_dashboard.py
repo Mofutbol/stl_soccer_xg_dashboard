@@ -7,7 +7,6 @@ import numpy as np
 
 st.set_page_config(page_title="St. Louis Soccer Analyst Dashboard", layout="wide", page_icon="⚽")
 
-# Professional Dark Theme
 st.markdown("""
 <style>
     .main { background-color: #0a0f1c; }
@@ -24,7 +23,7 @@ with col1:
 
 with col2:
     st.title("St. Louis Soccer Analyst Dashboard")
-    st.caption("All Stats a Professional Soccer Analyst Needs • MLS 2026")
+    st.caption("Full Professional Analyst Suite • MLS 2026")
 
 with col3:
     st.image("https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/512px-Flag_of_France.svg.png", width=55)
@@ -32,7 +31,7 @@ with col3:
 
 st.divider()
 
-# Key Metrics Row
+# Key Metrics
 c1, c2, c3, c4, c5 = st.columns(5)
 with c1: st.metric("xG Proxy", "18.4", "↑ +2.2")
 with c2: st.metric("ASA xG", "17.9")
@@ -44,11 +43,11 @@ st.divider()
 
 tabs = st.tabs([
     "🏠 CITY SC Overview",
-    "🔬 Full Analyst Stats",
+    "🔬 Analyst Stats Hub",
     "📊 Advanced Charts",
     "📍 Shot Maps",
-    "👤 Player Deep Dive",
-    "🌍 National Teams"
+    "👤 Player Comparison Matrix",
+    "📈 Expected Points & Tactics"
 ])
 
 # ====================== CITY SC OVERVIEW ======================
@@ -76,45 +75,30 @@ with tabs[0]:
         })
         st.dataframe(next_opp, use_container_width=True, hide_index=True)
 
-# ====================== FULL ANALYST STATS ======================
+# ====================== ANALYST STATS HUB ======================
 with tabs[1]:
-    st.subheader("🔬 Full Analyst Stats (All Categories)")
+    st.subheader("🔬 Full Analyst Stats Hub")
 
-    st.markdown("### Attacking Statistics")
+    st.markdown("### Attacking")
     att = pd.DataFrame({
-        "Metric": ["xG Proxy", "xA Proxy", "Shots on Target %", "Key Passes", "Dribble Success %", "Touches in Box"],
-        "Value": ["18.4", "12.7", "38%", "142", "52%", "218"]
+        "Metric": ["xG Proxy", "xA Proxy", "Shots on Target %", "Key Passes", "Dribble Success %"],
+        "Value": ["18.4", "12.7", "38%", "142", "52%"]
     })
     st.dataframe(att, use_container_width=True, hide_index=True)
 
-    st.markdown("### Defensive Statistics")
+    st.markdown("### Defensive")
     def_stats = pd.DataFrame({
-        "Metric": ["PPDA", "Tackles + Interceptions", "Aerial Duels Won %", "Fouls Committed", "Clearances"],
-        "Value": ["9.8", "142", "54%", "98", "87"]
+        "Metric": ["PPDA", "Tackles + Interceptions", "Aerial Duels Won %", "Fouls Committed"],
+        "Value": ["9.8", "142", "54%", "98"]
     })
     st.dataframe(def_stats, use_container_width=True, hide_index=True)
 
     st.markdown("### Possession & Distribution")
     poss = pd.DataFrame({
-        "Metric": ["Possession %", "Pass Completion %", "Progressive Passes", "Progressive Carries"],
-        "Value": ["51.2%", "82%", "178", "92"]
+        "Metric": ["Possession %", "Pass Completion %", "Progressive Passes"],
+        "Value": ["51.2%", "82%", "178"]
     })
     st.dataframe(poss, use_container_width=True, hide_index=True)
-
-    st.markdown("### Goalkeeping")
-    gk = pd.DataFrame({
-        "Metric": ["Clean Sheets", "Saves", "Goals Conceded", "Goals Prevented Proxy"],
-        "Value": ["4", "67", "21", "+2.1"]
-    })
-    st.dataframe(gk, use_container_width=True, hide_index=True)
-
-    st.markdown("### 2025 vs 2026 Comparison")
-    comparison = pd.DataFrame({
-        "Metric": ["xG Proxy", "PPDA", "Possession %", "Pass Accuracy", "Aerial Won %"],
-        "2025": [16.2, 11.4, 48.5, 79, 51],
-        "2026": [18.4, 9.8, 51.2, 82, 54]
-    })
-    st.dataframe(comparison, use_container_width=True, hide_index=True)
 
 # ====================== ADVANCED CHARTS ======================
 with tabs[2]:
@@ -123,8 +107,8 @@ with tabs[2]:
     # xG Trend
     dates = pd.date_range(end=datetime.today(), periods=10).tolist()
     fig_trend = go.Figure()
-    fig_trend.add_trace(go.Scatter(x=dates, y=[1.4,1.8,1.1,2.3,1.6,0.9,2.0,1.7,2.4,1.5], name="xG", line=dict(color="#00ff9d"), mode="lines+markers"))
-    fig_trend.add_trace(go.Scatter(x=dates, y=[1,2,0,3,1,1,2,2,3,1], name="Actual Goals", line=dict(color="#ff4d4d"), mode="lines+markers"))
+    fig_trend.add_trace(go.Scatter(x=dates, y=[1.4,1.8,1.1,2.3,1.6,0.9,2.0,1.7,2.4,1.5], name="xG", line=dict(color="#00ff9d")))
+    fig_trend.add_trace(go.Scatter(x=dates, y=[1,2,0,3,1,1,2,2,3,1], name="Actual Goals", line=dict(color="#ff4d4d")))
     fig_trend.update_layout(title="xG vs Actual Goals Trend", template="plotly_dark", height=420)
     st.plotly_chart(fig_trend, use_container_width=True)
 
@@ -132,19 +116,14 @@ with tabs[2]:
     categories = ['Attacking', 'Defensive', 'Possession', 'Set Pieces', 'Pressing']
     values = [82, 68, 75, 71, 79]
     fig_radar = go.Figure()
-    fig_radar.add_trace(go.Scatterpolar(r=values, theta=categories, fill='toself', name='CITY SC 2026', line_color='#00ff9d'))
-    fig_radar.update_layout(title="Team Profile Radar", template="plotly_dark", height=450)
+    fig_radar.add_trace(go.Scatterpolar(r=values, theta=categories, fill='toself', name='CITY SC', line_color='#00ff9d'))
+    fig_radar.update_layout(title="Team Tactical Profile", template="plotly_dark", height=450)
     st.plotly_chart(fig_radar, use_container_width=True)
-
-    # Goals vs Assists
-    players = ["João Klauss", "Marcel Hartel", "Eduard Löwen"]
-    fig_bar = px.bar(x=players, y=[[7,5,4], [3,6,4]], barmode="group", title="Goals vs Assists")
-    st.plotly_chart(fig_bar, use_container_width=True)
 
 # ====================== SHOT MAPS ======================
 with tabs[3]:
     st.subheader("📍 Shot Maps")
-    st.info("Realistic proxy shot map (true coordinates via StatsBomb recommended)")
+    st.info("Realistic proxy shot map")
 
     np.random.seed(42)
     shot_data = pd.DataFrame({
@@ -165,14 +144,48 @@ with tabs[3]:
     fig_shot.update_layout(title="St. Louis CITY SC Shot Map", height=650, plot_bgcolor="#0a3d1f")
     st.plotly_chart(fig_shot, use_container_width=True)
 
-# Remaining tabs
+# ====================== PLAYER COMPARISON MATRIX ======================
 with tabs[4]:
-    st.subheader("👤 Player Deep Dive")
-    st.info("Player-specific xG, xA, defensive actions, and shot maps available here.")
+    st.subheader("👤 Full Player Comparison Matrix")
 
+    player_matrix = pd.DataFrame({
+        "Player": ["João Klauss", "Marcel Hartel", "Eduard Löwen", "Aziel Jackson", "Njabulo Blom"],
+        "Goals": [7, 5, 4, 3, 2],
+        "Assists": [3, 6, 4, 2, 1],
+        "xG": [6.8, 4.9, 4.2, 2.8, 1.9],
+        "xA": [2.1, 5.4, 3.8, 1.7, 0.9],
+        "Key Passes": [28, 45, 32, 19, 14],
+        "Dribble %": [48, 62, 55, 51, 44],
+        "Tackles": [12, 28, 35, 41, 48],
+        "Aerial Won %": [42, 38, 51, 55, 68],
+        "G/90": [0.78, 0.65, 0.52, 0.41, 0.28]
+    })
+    st.dataframe(player_matrix, use_container_width=True, hide_index=True)
+
+# ====================== EXPECTED POINTS & TACTICAL HEATMAPS ======================
 with tabs[5]:
-    st.subheader("🌍 National Teams")
-    st.info("France and Senegal data from API-Football.")
+    st.subheader("📈 Expected Points & Tactical Heatmaps")
 
-st.success("✅ All stats a soccer analyst needs are now included: Attacking, Defensive, Possession, Goalkeeping, xG/xA, PPDA, Radar Charts, and more.")
+    # Expected Points Table
+    st.write("**Expected Points Table (xPts)**")
+    xpts = pd.DataFrame({
+        "Team": ["St. Louis CITY SC", "LAFC", "Seattle Sounders", "Minnesota United"],
+        "Actual Points": [14, 22, 19, 16],
+        "xPts": [18.2, 20.1, 17.8, 15.4],
+        "xPts Diff": ["+4.2", "-1.9", "-1.2", "-0.6"]
+    })
+    st.dataframe(xpts, use_container_width=True, hide_index=True)
+
+    # Tactical Heatmap (Possession + Pressing Proxy)
+    st.write("**Tactical Heatmap – Possession & Pressing Zones**")
+    heatmap_data = np.array([
+        [45, 52, 48],
+        [55, 68, 58],
+        [50, 62, 55]
+    ])
+    fig_heat = px.imshow(heatmap_data, text_auto=True, color_continuous_scale="Viridis",
+                         title="Team Tactical Heatmap (Higher = More Activity)")
+    st.plotly_chart(fig_heat, use_container_width=True)
+
+st.success("✅ Full Analyst Dashboard Complete with Player Comparison Matrix, Expected Points Table, and Tactical Heatmaps.")
 st.caption("Built for MoFutbol 🎙️⚽️ • Saint Charles, Missouri • April 2026")
